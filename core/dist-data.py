@@ -2,7 +2,7 @@ from datetime import datetime
 from enum import Enum
 
 from scipy import stats
-import numpy as np
+from numpy import asarray, save, load
 import math as math
 
 class distribution_Type( Enum ):
@@ -14,13 +14,22 @@ class distribution_Type( Enum ):
         return value in cls._value2member_map_ 
 
 
-
-class distribution:
-    def __init__( self, name, default_args, dist, dist_type = distribution_Type.continuos ) -> None:
+# TODO: some distributions are slow when it comes to generating random numbers. 
+# As such this should be done in parallel and save those random numbers in a file
+# which can then be read from the file system
+class Distribution_Generator:
+    def __init__( 
+        self, 
+        name, 
+        default_args, 
+        dist, 
+        dist_type = distribution_Type.continuos,
+        batch_size = 10000
+    ) -> None:
         if not isinstance( dist_type, distribution_Type ):
             raise ValueError( "dist_type must be distribution_Type.continuos or distribution_Type.discrete" )
 
-        self.batch_size = 1000
+        self.batch_size = batch_size
         self.name = name
         self.default_args = default_args
         self.type = dist_type
@@ -28,7 +37,17 @@ class distribution:
         self.params = list( filter( lambda key: key != "loc" and key != "scale", default_args.keys() ) )
         self.index = -1
         self.default_args[ "size" ] = self.batch_size
-        self._random_numbers = dist.rvs( **self.default_args )
+        self.dir = ""
+
+        start = datetime.now()
+
+        asarray( dist.rvs( **self.default_args ) )
+
+        end = datetime.now()
+
+        diff = end - start
+        secs = diff.total_seconds()
+        print( f"({name}) Random Numbers per Second: {(self.batch_size / secs):,}" )
 
     def _update_distribution( self, **kargs ) -> None:
         for k in self.params:
@@ -49,632 +68,622 @@ class distribution:
         else:
             self._generate_random_numbers()
             return self.random_number()
+    
+    def _save_to_file( self, file_name ) -> None:
+        save( file_name, asarray( self.dist.rvs( **self.default_args ) ) )
+
+    def _load_from_file( self, file_name ):
+        return load( file_name )
 
 
 
 #distributions to check, shape constants were taken from the examples on the scipy.stats distribution documentation pages.
-start = datetime.now()
 DISTRIBUTIONTS = [
-
-        distribution(
+        # 24,539,275 / second
+        Distribution_Generator(
             name = "alpha",
             default_args = { "a": 3.57, "loc": 0.0, "scale": 1.0 },
             dist = stats.alpha
 
         ), 
-
-        distribution(
+        # 32,653,061 / second
+        Distribution_Generator(
             name = "anglit",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.anglit
 
         ),  
-
-        distribution(
+        # 49,118,326 / second
+        Distribution_Generator(
             name = "arcsine",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.arcsine
 
         ), 
-
-        distribution(
+        # 8,232,214 / second
+        Distribution_Generator(
             name = "beta",
             default_args = { "a": 2.31, "b": 0.627, "loc": 0.0, "scale": 1.0 },
             dist = stats.beta
 
         ), 
-
-        distribution(
+        # 10,639,429 / second
+        Distribution_Generator(
             name = "betaprime",
             default_args = { "a": 5, "b": 6, "loc": 0.0, "scale": 1.0 },
             dist = stats.betaprime
 
         ), 
-
-        distribution(
+        # 49,333,991 / second
+        Distribution_Generator(
             name = "bradford",
             default_args = { "c": 0.299, "loc": 0.0, "scale": 1.0 },
             dist = stats.bradford
 
         ), 
-
-        distribution(
+        # 13,960,631 / second
+        Distribution_Generator(
             name = "burr",
             default_args = { "c": 10.5, "d": 4.3, "loc": 0.0, "scale": 1.0 },
             dist = stats.burr
 
         ), 
-
-        distribution(
+        # 27,923,601 / second
+        Distribution_Generator(
             name = "cauchy",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.cauchy
 
         ), 
-
-        distribution(
+        # 21,922,132 / second
+        Distribution_Generator(
             name = "chi",
             default_args = { "df": 78, "loc": 0.0, "scale": 1.0 },
             dist = stats.chi
 
         ), 
-
-        distribution(
+        # 20,388,191 / second
+        Distribution_Generator(
             name = "chi2",
             default_args = { "df": 55, "loc": 0.0, "scale": 1.0 },
             dist = stats.chi2
 
         ), 
-
-        distribution(
+        # 18,753,281 / second
+        Distribution_Generator(
             name = "cosine",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.cosine
 
         ), 
-
-        distribution(
+        # 16,909,601 / second
+        Distribution_Generator(
             name = "dgamma",
             default_args = { "a": 1.1, "loc": 0.0, "scale": 1.0 },
             dist = stats.dgamma
 
         ), 
-
-        distribution(
+        # 13,558,770 / second
+        Distribution_Generator(
             name = "dweibull",
             default_args = { "c": 2.07, "loc": 0.0, "scale": 1.0 },
             dist = stats.dweibull
 
         ), 
-
-        distribution(
+        # 19,514,098 / second
+        Distribution_Generator(
             name = "erlang",
             default_args = { "a": 2, "loc": 0.0, "scale": 1.0 },
             dist = stats.erlang
 
         ), 
-
-        distribution(
+        # 54,737,533 / second
+        Distribution_Generator(
             name = "expon",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.expon
 
         ), 
-
-        distribution(
+        # 23,342,670 / second
+        Distribution_Generator(
             name = "exponnorm",
             default_args = { "K": 1.5, "loc": 0.0, "scale": 1.0 },
             dist = stats.exponnorm
 
         ), 
-
-        distribution(
+        # 12,541,858 / second
+        Distribution_Generator(
             name = "exponweib",
             default_args = { "a": 2.89, "c": 1.95, "loc": 0.0, "scale": 1.0 },
             dist = stats.exponweib
 
         ), 
-
-        distribution(
+        # 15,797,039 / second
+        Distribution_Generator(
             name = "exponpow",
             default_args = { "b": 2.7, "loc": 0.0, "scale": 1.0 },
             dist = stats.exponpow,
 
         ), 
-
-        distribution(
+        # 14,015,809 / second
+        Distribution_Generator(
             name = "f",
             default_args = { "dfn": 29, "dfd": 18, "loc": 0.0, "scale": 1.0 },
             dist = stats.f
 
         ), 
-
-        distribution(
+        # 24,493,594 / second
+        Distribution_Generator(
             name = "fatiguelife",
             default_args = { "c": 29, "loc": 0.0, "scale": 1.0 },
             dist = stats.fatiguelife
 
         ), 
-
-        distribution(
+        # 20,349,192 / second
+        Distribution_Generator(
             name = "fisk",
             default_args = { "c": 3.09, "loc": 0.0, "scale": 1.0 },
             dist = stats.fisk
 
         ), 
-
-        distribution(
+        # 30,569,821 / second
+        Distribution_Generator(
             name = "foldcauchy",
             default_args = { "c": 4.72, "loc": 0.0, "scale": 1.0 },
             dist = stats.foldcauchy
 
         ), 
-
-        distribution(
+        # 32,561,622 / second
+        Distribution_Generator(
             name = "foldnorm",
             default_args = { "c": 1.95, "loc": 0.0, "scale": 1.0 },
             dist = stats.foldnorm
 
         ), 
-
-        distribution(
+        # 19,604,383 / second
+        Distribution_Generator(
             name = "genlogistic",
             default_args = { "c": 0.412, "loc": 0.0, "scale": 1.0 },
             dist = stats.genlogistic
 
         ), 
-
-        distribution(
+        # 32,449,621 / second
+        Distribution_Generator(
             name = "genpareto",
             default_args = { "c": 0.1, "loc": 0.0, "scale": 1.0 },
             dist = stats.genpareto
 
         ), 
-
-        distribution(
+        # 345,303 / second
+        Distribution_Generator(
             name = "gennorm",
             default_args = { "beta": 1.3, "loc": 0.0, "scale": 1.0 },
             dist = stats.gennorm
 
         ), 
 
-        distribution(
+        Distribution_Generator(
             name = "genexpon",
             default_args = { "a": 9.13, "b": 16.2, "c": 3.28, "loc": 0.0, "scale": 1.0 },
             dist = stats.genexpon
 
         ), 
-
-        distribution(
+        # 18,728,696 / second
+        Distribution_Generator(
             name = "genextreme",
             default_args = { "c": -0.1, "loc": 0.0, "scale": 1.0 },
             dist = stats.genextreme
 
         ), 
-
-        distribution(
+        # 390 / second
+        Distribution_Generator(
             name = "gausshyper",
             default_args = { "a": 13.8, "b": 3.12, "c": 2.51, "z": 5.18, "loc": 0.0, "scale": 1.0 },
             dist = stats.gausshyper
 
         ), 
-
-        distribution(
+        # 20,570,206 / second
+        Distribution_Generator(
             name = "gamma",
             default_args = { "a": 1.99, "loc": 0.0, "scale": 1.0 },
             dist = stats.gamma
 
         ), 
-
-        distribution(
+        # 23,334,500 / second
+        Distribution_Generator(
             name = "gengamma",
             default_args = { "a": 4.42, "loc": 0.0, "scale": 1.0 },
             dist = stats.gamma
 
         ), 
-
-        distribution(
+        # 24,711,493 / second
+        Distribution_Generator(
             name = "genhalflogistic",
             default_args = { "c": 0.773, "loc": 0.0, "scale": 1.0 },
             dist = stats.genhalflogistic
 
         ), 
-
-        distribution(
+        # 32,997,855 / second
+        Distribution_Generator(
             name = "gilbrat",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.gilbrat
 
         ), 
-
-        distribution(
+        # 24,696,846 / second
+        Distribution_Generator(
             name = "gompertz",
             default_args = { "c": 0.947, "loc": 0.0, "scale": 1.0 },
             dist = stats.gompertz
 
         ), 
-
-        distribution(
+        # 32,941,331 / second
+        Distribution_Generator(
             name = "gumbel_r",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.gumbel_r
 
         ), 
-
-        distribution(
+        # 32,985,882 / second
+        Distribution_Generator(
             name = "gumbel_l",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.gumbel_l
 
         ), 
-
-        distribution(
+        # 35,250,987 / second
+        Distribution_Generator(
             name = "halfcauchy",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.halfcauchy
 
         ), 
-
-        distribution(
+        # 44,865,180 / second
+        Distribution_Generator(
             name = "halflogistic",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.halflogistic
 
         ), 
-
-        distribution(
+        # 33,014,196 / second
+        Distribution_Generator(
             name = "halfnorm",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.halfnorm
         ), 
-
-        distribution(
+        # 2,885,578 / second
+        Distribution_Generator(
             name = "halfgennorm",
             default_args = { "loc": 0.0, "scale": 1.0, "beta": 1.0 },
             dist = stats.halfgennorm
 
         ), 
-
-        distribution(
+        # 26,018,629 / second
+        Distribution_Generator(
             name = "hypsecant",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.hypsecant
 
         ), 
-
-        distribution(
+        # 1,706,376 / second
+        Distribution_Generator(
             name = "invgamma",
             default_args = { "a": 4.07, "loc": 0.0, "scale": 1.0 },
             dist = stats.invgamma
 
         ), 
-
-        distribution(
+        # 23,561,011 / second
+        Distribution_Generator(
             name = "invgauss",
             default_args = { "mu": 0.145, "loc": 0.0, "scale": 1.0 },
             dist = stats.invgauss
 
         ), 
-
-        distribution(
+        # 19,767,533 / second
+        Distribution_Generator(
             name = "invweibull",
             default_args = { "c": 10.6, "loc": 0.0, "scale": 1.0 },
             dist = stats.invweibull
 
         ), 
-
-        distribution(
+        # 24,719,434 / second
+        Distribution_Generator(
             name = "johnsonsb",
             default_args = { "a": 4.32, "b": 3.18, "loc": 0.0, "scale": 1.0 },
             dist = stats.johnsonsb
 
         ), 
-
-        distribution(
+        # 19,787,873 / second
+        Distribution_Generator(
             name = "johnsonsu",
             default_args = { "a": 2.25, "b": 2.25, "loc": 0.0, "scale": 1.0 },
             dist = stats.johnsonsu
 
         ), 
 
-        distribution(
+        Distribution_Generator(
             name = "ksone",
             default_args = { "n": 1e+03, "loc": 0.0, "scale": 1.0 },
             dist = stats.ksone
 
         ), 
-
-        distribution(
+        # 3,159,487 / second
+        Distribution_Generator(
             name = "kstwobign",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.kstwobign
 
         ), 
-
-        distribution(
+        # 49,404,673 / second
+        Distribution_Generator(
             name = "laplace",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.laplace
 
         ), 
-
-        distribution(
+        # 24,688,310 / second
+        Distribution_Generator(
             name = "levy",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.levy
 
         ), 
-
-        distribution(
+        # 26,001,040 / second
+        Distribution_Generator(
             name = "levy_l",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.levy_l
 
         ), 
-
-        distribution(
+        # 3,629,144 / second
+        Distribution_Generator(
             name = "levy_stable",
             default_args = { "alpha": 0.357, "beta": -0.675, "loc": 0.0, "scale": 1.0 },
             dist = stats.levy_stable
 
         ), 
-
-        distribution(
+        # 49,341,293 / second
+        Distribution_Generator(
             name = "logistic",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.logistic
 
         ), 
-
-        distribution(
+        # 12,351,626 / second
+        Distribution_Generator(
             name = "loggamma",
             default_args = { "c": 0.414, "loc": 0.0, "scale": 1.0 },
             dist = stats.loggamma
 
         ), 
-
-        distribution(
+        # 14,111,537 / second
+        Distribution_Generator(
             name = "loglaplace",
             default_args = { "c": 3.25, "loc": 0.0, "scale": 1.0 },
             dist = stats.loglaplace
 
         ), 
-
-        distribution(
+        # 32,927,230 / second
+        Distribution_Generator(
             name = "lognorm",
             default_args = { "s": 0.954, "loc": 0.0, "scale": 1.0 },
             dist = stats.lognorm
 
         ), 
-
-        distribution(
+        # 24,677,343 / second
+        Distribution_Generator(
             name = "lomax",
             default_args = { "c": 1.88, "loc": 0.0, "scale": 1.0 },
             dist = stats.lomax
 
         ), 
-
-        distribution(
+        # 19,719,976 / second
+        Distribution_Generator(
             name = "maxwell",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.maxwell
 
         ), 
-
-        distribution(
+        # 49,465,769/ second
+        Distribution_Generator(
             name = "mielke",
             default_args = { "loc": 0.0, "scale": 1.0, "k": 1.0, "s": 1.0 },
             dist = stats.mielke
 
         ), 
-
-        distribution(
+        # 1,706,417 / second
+        Distribution_Generator(
             name = "nakagami",
             default_args = { "nu": 4.97, "loc": 0.0, "scale": 1.0 },
             dist = stats.nakagami
 
         ), 
-
-        distribution(
+        # 14,117,115 / second
+        Distribution_Generator(
             name = "ncx2",
             default_args = { "df": 21, "nc": 1.06, "loc": 0.0, "scale": 1.0 },
             dist = stats.ncx2
 
         ), 
-
-        distribution(
+        # 9,891,392 / second
+        Distribution_Generator(
             name = "ncf",
             default_args = { "dfn": 27, "dfd": 27, "nc": 0.416, "loc": 0.0, "scale": 1.0 },
             dist = stats.ncf
 
         ), 
-
-        distribution(
+        # 12,660,631 / second
+        Distribution_Generator(
             name = "nct",
             default_args = { "df": 14, "nc": 0.24, "loc": 0.0, "scale": 1.0 },
             dist = stats.nct
 
         ), 
-
-        distribution(
+        # 44,686,745 / second
+        Distribution_Generator(
             name = "norm",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.norm
 
         ), 
-
-        distribution(
+        # 24,694,406 / second
+        Distribution_Generator(
             name = "pareto",
             default_args = { "b": 2.62, "loc": 0.0, "scale": 1.0 },
             dist = stats.pareto
 
         ), 
-
-        distribution(
+        # 12,346,593 / second
+        Distribution_Generator(
             name = "pearson3",
             default_args = { "skew": 0.1, "loc": 0.0, "scale": 1.0 },
             dist = stats.pearson3
 
         ), 
-
-        distribution(
+        # 25,996,308 / second
+        Distribution_Generator(
             name = "powerlaw",
             default_args = { "a": 1.66, "loc": 0.0, "scale": 1.0 },
             dist = stats.powerlaw
 
         ), 
-
-        distribution(
+        # 15,918,497 / second
+        Distribution_Generator(
             name = "powerlognorm",
             default_args = { "c": 2.14, "s": 0.446, "loc": 0.0, "scale": 1.0 },
             dist = stats.powerlognorm
 
         ), 
-
-        distribution(
+        # 16,464,970 / second
+        Distribution_Generator(
             name = "powernorm",
             default_args = { "c": 4.45, "loc": 0.0, "scale": 1.0 },
             dist = stats.powernorm
 
         ), 
-
-        distribution(
+        # 9,884,548 / second
+        Distribution_Generator(
             name = "r",
             default_args = { "c": 0.9, "loc": 0.0, "scale": 1.0 },
             dist = stats.rdist
 
         ), 
-
-        distribution(
+        # 24,648,755 / second
+        Distribution_Generator(
             name = "reciprocal",
             default_args = { "a": 0.00623, "b": 1.01, "loc": 0.0, "scale": 1.0 },
             dist = stats.reciprocal
 
         ), 
-
-        distribution(
+        # 32,853,669 / second
+        Distribution_Generator(
             name = "rayleigh",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.rayleigh
 
         ), 
-
-        distribution(
+        # 19,784,742 / second
+        Distribution_Generator(
             name = "rice",
             default_args = { "b": 0.775, "loc": 0.0, "scale": 1.0 },
             dist = stats.rice
 
         ), 
-
-        distribution(
+        # 19,705,986 / second
+        Distribution_Generator(
             name = "recipinvgauss",
             default_args = { "mu": 0.63, "loc": 0.0, "scale": 1.0 },
             dist = stats.recipinvgauss
 
         ), 
-
-        distribution(
+        # 26,009,831 / second
+        Distribution_Generator(
             name = "semicircular",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.semicircular
 
         ), 
-
-        distribution(
+        # 15,936,508 / second
+        Distribution_Generator(
             name = "t",
             default_args = { "df": 2.74, "loc": 0.0, "scale": 1.0 },
             dist = stats.t
 
         ), 
-
-        distribution(
+        # 49,536,830 / second
+        Distribution_Generator(
             name = "triang",
             default_args = { "c": 0.158, "loc": 0.0, "scale": 1.0 },
             dist = stats.triang
 
         ), 
-
-        distribution(
+        # 35,380,696 / second
+        Distribution_Generator(
             name = "truncexpon",
             default_args = { "b": 4.69, "loc": 0.0, "scale": 1.0 },
             dist = stats.truncexpon
 
         ), 
-
-        distribution(
+        # 23,479,690 / second
+        Distribution_Generator(
             name = "truncnorm",
             default_args = { "a": 0.1, "b": 2, "loc": 0.0, "scale": 1.0 },
             dist = stats.truncnorm
 
         ), 
-
-        distribution(
+        # 16,464,428 / second
+        Distribution_Generator(
             name = "tukeylambda",
             default_args = { "lam": 3.13, "loc": 0.0, "scale": 1.0 },
             dist = stats.tukeylambda
 
         ), 
-
-        distribution(
-            name = "tukeylambda",
-            default_args = { "lam": 3.13, "loc": 0.0, "scale": 1.0 },
-            dist = stats.tukeylambda
-
-        ), 
-
-        distribution(
+        # 98,619,329 / second
+        Distribution_Generator(
             name = "uniform",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.uniform
 
         ), 
-
-        distribution(
+        # 10,998,317 / second
+        Distribution_Generator(
             name = "vonmises",
             default_args = { "kappa":3.99, "loc": 0.0, "scale": 1.0 },
             dist = stats.vonmises
 
         ), 
-
-        distribution(
+        # 10,990,943 / second
+        Distribution_Generator(
             name = "vonmises_line",
             default_args = { "kappa":3.99, "loc": 0.0, "scale": 1.0 },
             dist = stats.vonmises_line
 
         ), 
-
-        distribution(
+        # 24,733,496 / second
+        Distribution_Generator(
             name = "wald",
             default_args = { "loc": 0.0, "scale": 1.0 },
             dist = stats.wald
 
         ), 
-
-        distribution(
+        # 19,783,959 / second
+        Distribution_Generator(
             name = "weibull_min",
             default_args = { "c":1.79, "loc": 0.0, "scale": 1.0 },
             dist = stats.weibull_min
 
         ), 
-
-        distribution(
+        # 19,739,049 / second
+        Distribution_Generator(
             name = "weibull_max",
             default_args = { "c":2.87, "loc": 0.0, "scale": 1.0 },
             dist = stats.weibull_max
 
         ), 
-
-        distribution(
+        # 12,348,880 / second
+        Distribution_Generator(
             name = "wrapcauchy",
             default_args = { "c":0.0311, "loc": 0.0, "scale": 1.0 },
             dist = stats.wrapcauchy
         )
-
 ]
-end = datetime.now()
-diff = end - start
-secs = diff.total_seconds()
-print( DISTRIBUTIONTS[0].params )
-print( f"seconds: {secs}" )
-print( f"Distribution: {len( DISTRIBUTIONTS )}" )
-print( f"Distribution per Second: {len( DISTRIBUTIONTS ) / secs }" )
