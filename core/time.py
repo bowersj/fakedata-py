@@ -16,11 +16,9 @@ default_dist = default_rng()
 
 std  = sec_in_hr * 1
 
-morning_mean = sec_in_hr * 8
-
+morning_mean   = sec_in_hr * 8
 afternoon_mean = sec_in_hr * 14
-
-evening_mean = sec_in_hr * 19
+evening_mean   = sec_in_hr * 19
 
 
 def _TOD_helper_utc( mean, std ):
@@ -34,7 +32,7 @@ def _TOD_helper_utc( mean, std ):
     return time( hrs, mins, secs, micros )
 
 
-def mornging_utc():
+def morning_utc():
     return _TOD_helper_utc( morning_mean, std )
 
 
@@ -50,14 +48,14 @@ def _time_str_to_int_UTC( str ):
     return t.hour * micro_in_hr + t.minute * micro_in_min + t.second * micro_in_sec + t.microsecond
 
 class BoundedTime_UTC:
-    def __init__( self, start, end, generator = default_dist ):
+    def __init__( self, start, end, distribution = default_dist ):
         # TODO: add validation on the format of the string
         self.start = _time_str_to_int_UTC( start )
         self.end   = _time_str_to_int_UTC( end )
-        self.rn    = generator
+        self.dist  = distribution
 
     def gen( self ):
-        time_int = self.rn.integers( low = self.start, high = self.end + 1 )
+        time_int = self.dist.integers( low = self.start, high = self.end )
         
         return time( 
             time_int // micro_in_hr, 
@@ -68,14 +66,14 @@ class BoundedTime_UTC:
 
 # DO NOT PUT TIMEZONE INFO IN start AND end PARAMETERS, RATHER PASS IN THROUGH THE timezone PARAMETER
 class BoundedTime_TimeZone:
-    def __init__( self, start, end, timezone, generator = default_dist ):
+    def __init__( self, start, end, timezone, distribution = default_dist ):
         self.tz    = pytz.timezone( timezone )
         self.start = _time_str_to_int_UTC( start )
         self.end   = _time_str_to_int_UTC( end )
-        self.rn    = generator
+        self.dist  = distribution
 
     def gen( self ):
-        time_int = self.rn.integers( low = self.start, high = self.end + 1 )
+        time_int = self.dist.integers( low = self.start, high = self.end + 1 )
         
         return time( 
             time_int // micro_in_hr, 

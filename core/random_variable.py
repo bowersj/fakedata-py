@@ -1,14 +1,15 @@
-from matplotlib.pyplot import isinteractive
+from tarfile import SUPPORTED_TYPES
+from xmlrpc.client import boolean
 from scipy import stats
 import numpy as np
-import math as math
+import math  as math
 
-from utils import type as utils
+from utils import type_validation as utils
 from utils.dictionary_helpers import key_default_value
 from constants import DEFAULT_BATCH_SIZE, DEFAULT_MU, DEFAULT_SIGMA, DEFAULT_B
 
 class Random_Integer:
-    def __init__( self, distribution, lower, upper, args = {}, batch_size = DEFAULT_BATCH_SIZE ) -> None:
+    def __init__( self, dist, lower, upper, args = {}, batch_size = DEFAULT_BATCH_SIZE ) -> None:
 
         if not isinstance( args, dict ):
             raise ValueError( "args must be a dictionary" )
@@ -22,20 +23,23 @@ class Random_Integer:
         if not upper > lower:
             raise ValueError( "upper must be at least one greater than lower" )
         
-        if not isinstance( distribution, ( type( stats.uniform ), type( stats.truncexpon ), type( stats.truncnorm ) ) ):
+        if not valid_distribution( dist ):
             raise ValueError( "distribution must be one of the following from the scipy.stats library, uniform, truncexpon, or truncnorm" )
 
 
-        if isinstance( distribution, type( stats.uniform ) ):
-            self.dist = distribution()
+        if isinstance( dist, type( stats.uniform ) ):
+            self.dist = dist()
+            self.p = []
 
-        elif isinstance( distribution, type( stats.truncexpon ) ):
+        elif isinstance( dist, type( stats.truncexpon ) ):
             b = key_default_value( args, "b", DEFAULT_B ) 
-            self.dist = distribution( b )
+            self.dist = dist( b )
+            self.p = [ "b" ]
 
-        elif isinstance( distribution, type( stats.truncnorm ) ):
+        elif isinstance( dist, type( stats.truncnorm ) ):
             mu    = key_default_value( args, "mu",    DEFAULT_MU )
             sigma = key_default_value( args, "sigma", DEFAULT_SIGMA )
+            self.p = [ "mu", "sigma" ]
             
             if not ( sigma >= 0.1 and sigma < 1 ):
                 raise ValueError( "sigma must fall in the range 0.1 <= sigma < 1" )
@@ -43,7 +47,7 @@ class Random_Integer:
             if not ( mu >= 0.1 and mu < 1 ):
                 raise ValueError( "mu must fall in the range 0.1 <= mu < 1" )
 
-            self.dist = distribution( 
+            self.dist = dist( 
                 ( lower - mu ) / sigma,
                 ( upper - mu ) / sigma,
                 loc = mu,
@@ -88,6 +92,34 @@ class Random_Integer:
         idx = self.index
 
         return self._RVS[ idx ]
+
+_DISTS = [
+    "uniform",
+    stats.uniform,
+    "truncexpon",
+    stats.truncexpon,
+    "truncnorm",
+    stats.truncnorm
+]
+
+DISTRIBUTIONS = { _DISTS[(i*2)]: _DISTS[(i*2) + 1] for i in range( 0, len( _DISTS ) // 2 ) }
+# print( DISTRIBUTIONS )
+
+def supported_distribution( name ) -> boolean:
+    if not ( isinstance( name, str ) and name != "" ):
+        raise ValueError( "name must be a string" )
+    
+    return DISTRIBUTIONS.has_key( name )
+    
+    
+def get_supported_distribution( name ):
+    if not supported_distribution( name ):
+        raise ValueError( f"{name} is not a supported distribution" )
+    
+    return DISTRIBUTIONS.get( name )
+
+def valid_distribution( dist ) -> boolean:
+    return isinstance( dist, ( type( stats.uniform ), type( stats.truncexpon ), type( stats.truncnorm ) ) )
 
 # from scipy.stats import truncexpon
 # import matplotlib.pyplot as plt

@@ -1,6 +1,6 @@
 from multiprocessing.sharedctypes import Value
 import uuid as UUID
-import core.utils.type as it
+import utils.type_validation as it
 
 def uuid_v1():
     return UUID.uuid1()
