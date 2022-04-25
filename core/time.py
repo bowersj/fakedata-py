@@ -1,18 +1,12 @@
-from datetime import time
+from datetime import datetime, time
 from math import floor
 
 import pytz
 import numpy as np
 from numpy.random import default_rng
+from random_variable import get_supported_distribution, assert_distribution
+from constants import sec_in_min, sec_in_hr, micro_in_sec, micro_in_min, micro_in_hr, DEFAULT_TIME_PATTERN, DEFAULT_DIST
 
-
-sec_in_min = 60
-sec_in_hr = 3600
-micro_in_sec = 1_000_000
-micro_in_min = micro_in_sec * sec_in_min
-micro_in_hr  = micro_in_sec * sec_in_hr
-
-default_dist = default_rng()
 
 std  = sec_in_hr * 1
 
@@ -35,7 +29,6 @@ def _TOD_helper_utc( mean, std ):
 def morning_utc():
     return _TOD_helper_utc( morning_mean, std )
 
-
 def afternoon_utc():
     return _TOD_helper_utc( afternoon_mean, std )
 
@@ -43,16 +36,25 @@ def evening_utc():
     return _TOD_helper_utc( evening_mean, std )
 
 
-def _time_str_to_int_UTC( str ):
-    t = time( *map( int, str.split(':') ) )
+def _time_str_to_int_UTC( str, pattern = DEFAULT_TIME_PATTERN ):
+    t = datetime.strptime( str, pattern ).time()
     return t.hour * micro_in_hr + t.minute * micro_in_min + t.second * micro_in_sec + t.microsecond
 
 class BoundedTime_UTC:
-    def __init__( self, start, end, distribution = default_dist ):
+    def __init__( self, start, end, distribution = DEFAULT_DIST, args = {} ):
         # TODO: add validation on the format of the string
         self.start = _time_str_to_int_UTC( start )
         self.end   = _time_str_to_int_UTC( end )
-        self.dist  = distribution
+        
+        # TODO: add validation on the format of the string
+        assert_distribution( distribution )
+
+        dist  = get_supported_distribution( distribution )
+        self.dist  = dist( 
+            low  = self.start.days,
+            high = self.end.days,
+            args = args
+        )
 
     def gen( self ):
         time_int = self.dist.integers( low = self.start, high = self.end )
@@ -66,11 +68,20 @@ class BoundedTime_UTC:
 
 # DO NOT PUT TIMEZONE INFO IN start AND end PARAMETERS, RATHER PASS IN THROUGH THE timezone PARAMETER
 class BoundedTime_TimeZone:
-    def __init__( self, start, end, timezone, distribution = default_dist ):
+    def __init__( self, start, end, timezone, distribution = DEFAULT_DIST, args = {} ):
         self.tz    = pytz.timezone( timezone )
         self.start = _time_str_to_int_UTC( start )
         self.end   = _time_str_to_int_UTC( end )
-        self.dist  = distribution
+
+        # TODO: add validation on the format of the string
+        assert_distribution( distribution )
+
+        dist  = get_supported_distribution( distribution )
+        self.dist  = dist( 
+            low  = self.start.days,
+            high = self.end.days,
+            args = args
+        )
 
     def gen( self ):
         time_int = self.dist.integers( low = self.start, high = self.end + 1 )
@@ -82,6 +93,10 @@ class BoundedTime_TimeZone:
             time_int % micro_in_sec,
             self.tz
         )
+
+# use strftime method on time object to format the string based off of pattern
+# https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
+
 
 # simple performance testing
 # source: https://pymotw.com/3/timeit/#:~:text=The%20timeit()%20method%20returns,one%20item%20in%20the%20dictionary.
