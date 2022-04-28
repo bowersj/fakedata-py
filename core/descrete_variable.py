@@ -1,6 +1,4 @@
-from scipy import stats
 import numpy as np
-import math as math
 
 import utils.type_validation as utils
 from constants import DEFAULT_BATCH_SIZE
