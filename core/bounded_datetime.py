@@ -53,6 +53,9 @@ class BoundedDatetime_TimeZone:
 # use strftime method on time object to format the string based off of pattern
 # https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
+b = BoundedDatetime_UTC( "2000-07-4T07:15:00", "2022-04-28T20:00:00" )
+print( b.gen() )
+
 
 # simple performance testing
 # source: https://pymotw.com/3/timeit/#:~:text=The%20timeit()%20method%20returns,one%20item%20in%20the%20dictionary.
@@ -79,7 +82,7 @@ class BoundedDatetime_TimeZone:
 #     print("{} iterations".format( count ) )
 #     print()
 #     t = timeit.Timer(
-#             'b_time = BoundedTime_UTC( "07:15:00", "20:00:00" ); b_time.gen()', 
+#             'b_time = BoundedDatetime_UTC( "07:15:00", "20:00:00" ); b_time.gen()', 
 #             setup = 'from __main__ import BoundedTime_UTC'
 #         )
 #     show_results( t.timeit( number = count ) )
