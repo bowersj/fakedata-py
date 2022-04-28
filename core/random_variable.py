@@ -121,7 +121,7 @@ def supported_distribution( name ) -> boolean:
     if not ( isinstance( name, str ) and name != "" ):
         raise ValueError( "name must be a string" )
     
-    return DISTRIBUTIONS.has_key( name )
+    return name in DISTRIBUTIONS
     
     
 def get_supported_distribution( name ):

@@ -11,18 +11,24 @@ def _date_str_to_int_UTC( str, pattern = DEFAULT_DATE_PATTERN ) -> timedelta:
     return datetime.strptime( str, pattern ).date().toordinal()
 
 class BoundedDate_UTC:
-    def __init__( self, start, end, distribution = DEFAULT_DIST, args = {} ):
+    def __init__( self, start, end, pattern = DEFAULT_DATE_PATTERN, distribution = DEFAULT_DIST, args = {} ):
         # TODO: add validation on the format of the string
         assert_distribution( distribution )
 
         dist  = get_supported_distribution( distribution )
 
-        self.start = _date_str_to_int_UTC( start )
-        self.end   = _date_str_to_int_UTC( end )
+        start_int = _date_str_to_int_UTC( start, pattern )
+        end_int   = _date_str_to_int_UTC( end,   pattern )
+
+        if start_int > end_int:
+            raise ValueError( "start must be less than end" )
+
+        self.start = start_int
+        self.end   = end_int
 
         self.dist  = dist( 
-            low  = self.start.days,
-            high = self.end.days,
+            low  = start_int,
+            high = end_int,
             args = args
         )
 
@@ -31,18 +37,24 @@ class BoundedDate_UTC:
 
 # DO NOT PUT TIMEZONE INFO IN start AND end PARAMETERS, RATHER PASS IN THROUGH THE timezone PARAMETER
 class BoundedDate_TimeZone:
-    def __init__( self, start, end, timezone, distribution = DEFAULT_DIST, args = {} ):
+    def __init__( self, start, end, timezone, pattern = DEFAULT_DATE_PATTERN, distribution = DEFAULT_DIST, args = {} ):
         assert_distribution( distribution )
         self.tz    = pytz.timezone( timezone )
 
         dist  = get_supported_distribution( distribution )
 
-        self.start = _date_str_to_int_UTC( start )
-        self.end   = _date_str_to_int_UTC( end )
+        start_int = _date_str_to_int_UTC( start, pattern )
+        end_int   = _date_str_to_int_UTC( end,   pattern )
+
+        if start_int > end_int:
+            raise ValueError( "start must be less than end" )
+
+        self.start = start_int
+        self.end   = end_int
 
         self.dist  = dist( 
-            low  = self.start.days,
-            high = self.end.days,
+            low  = start_int,
+            high = end_int,
             args = args
         )
 

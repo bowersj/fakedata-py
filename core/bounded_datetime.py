@@ -12,18 +12,23 @@ def _datetime_str_to_int_UTC( str, pattern = DEFAULT_DATETIME_PATTERN ) -> timed
     return datetime.strptime( str, pattern ).toordinal()
 
 class BoundedDatetime_UTC:
-    def __init__( self, start, end, distribution = DEFAULT_DIST, args = {} ):
+    def __init__( self, start, end, pattern = DEFAULT_DATETIME_PATTERN, distribution = DEFAULT_DIST, args = {} ):
         # TODO: add validation on the format of the string
         assert_distribution( distribution )
 
-        dist  = get_supported_distribution( distribution )
+        dist      = get_supported_distribution( distribution )
+        start_int = _datetime_str_to_int_UTC( start, pattern )
+        end_int   = _datetime_str_to_int_UTC( end,   pattern )
 
-        self.start = _datetime_str_to_int_UTC( start )
-        self.end   = _datetime_str_to_int_UTC( end )
+        if start_int > end_int:
+            raise ValueError( "start must be less than end" )
 
-        self.dist  = dist( 
-            low  = self.start.days,
-            high = self.end.days,
+        self.start = start_int
+        self.end   = end_int
+
+        self.dist = dist( 
+            low  = start_int,
+            high = end_int,
             args = args
         )
 
@@ -32,18 +37,24 @@ class BoundedDatetime_UTC:
 
 # DO NOT PUT TIMEZONE INFO IN start AND end PARAMETERS, RATHER PASS IN THROUGH THE timezone PARAMETER
 class BoundedDatetime_TimeZone:
-    def __init__( self, start, end, timezone, distribution = DEFAULT_DIST, args = {} ):
+    def __init__( self, start, end, timezone, pattern = DEFAULT_DATETIME_PATTERN, distribution = DEFAULT_DIST, args = {} ):
         assert_distribution( distribution )
         self.tz    = pytz.timezone( timezone )
 
         dist  = get_supported_distribution( distribution )
 
-        self.start = _datetime_str_to_int_UTC( start )
-        self.end   = _datetime_str_to_int_UTC( end )
+        start_int = _datetime_str_to_int_UTC( start, pattern )
+        end_int   = _datetime_str_to_int_UTC( end,   pattern )
+
+        if start_int > end_int:
+            raise ValueError( "start must be less than end" )
+
+        self.start = start_int
+        self.end   = end_int
 
         self.dist  = dist( 
-            low  = self.start.days,
-            high = self.end.days,
+            low  = start_int,
+            high = end_int,
             args = args
         )
 
@@ -53,7 +64,7 @@ class BoundedDatetime_TimeZone:
 # use strftime method on time object to format the string based off of pattern
 # https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior
 
-b = BoundedDatetime_UTC( "2000-07-4T07:15:00", "2022-04-28T20:00:00" )
+b = BoundedDatetime_UTC( "2000-07-4T07:15:00", "2022-04-28T20:00:00", pattern = "%Y-%m-%dT%H:%M:%S" )
 print( b.gen() )
 
 
