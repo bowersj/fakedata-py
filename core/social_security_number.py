@@ -3,6 +3,8 @@ from numpy.random import default_rng
 
 from utils.string_utilities import number_pad_start_2, number_pad_start_3, number_pad_start_4
 
+#  TODO: add support for old style ssn numbers based of geographic area
+
 DIST = default_rng()
 
 def as_number( part_1, part_2, part_3 ):
