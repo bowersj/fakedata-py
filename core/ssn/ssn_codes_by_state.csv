@@ -1,0 +1,65 @@
+﻿SSN Area Number,number_range,min,max,Location
+577-579,false,577,579,District of Columbia
+159-211,false,159,211,Pennsylvania
+001-003,false,001,003,New Hampshire
+586,false,586,586,Philippine Islands
+691-699,false,691,699,Not Issued
+587-665,false,587,665,Not Issued
+221-222,false,221,222,Delaware
+518-519,false,518,519,Idaho
+318-361,false,318,361,Illinois
+521-524,false,521,524,Colorado
+449-467,false,449,467,Texas
+516-517,false,516,517,Montana
+135-158,false,135,158,New Jersey
+362-386,false,362,386,Michigan
+580-584,false,580,584,Puerto Rico
+501-502,false,501,502,North Dakota
+575-576,false,575,576,Hawaii
+268-302,false,268,302,Ohio
+486-500,false,486,500,Missouri
+468-477,false,468,477,Minnesota
+440-448,false,440,448,Oklahoma
+223-231,false,223,231,Virginia
+700-728,false,700,728,Railroad Board**
+531-539,false,531,539,Washington
+528-529,false,528,529,Utah
+050-134,false,050,134,New York
+526-527,false,526,527,Arizona
+540-544,false,540,544,Oregon
+425-428,false,425,428,Mississippi
+750-772,false,750,772,Not Issued
+667-679,false,667,679,Not Issued
+232,false,232,232,North Carolina
+729-733,false,729,733,Enumeration at Entry
+408-415,false,408,415,Tennessee
+433-439,false,433,439,Louisiana
+520,false,520,520,Wyoming
+008-009,false,008,009,Vermont
+580,false,580,580,Virgin Islands
+303-317,false,303,317,Indiana
+505-508,false,505,508,Nebraska
+586,false,586,586,American Samoa
+429-432,false,429,432,Arkansas
+509-515,false,509,515,Kansas
+252-260,false,252,260,Georgia
+"530,680",true,530,680,Nevada
+416-424,false,416,424,Alabama
+574,false,574,574,Alaska
+586,false,586,586,Guam
+247-251,false,247,251,South Carolina
+237-246,false,237,246,Not Issued
+232-236,false,232,236,West Virginia
+212-220,false,212,220,Maryland
+545-573,false,545,573,California
+004-007,false,004,007,Maine
+010-034,false,010,034,Massachusetts
+503-504,false,503,504,South Dakota
+478-485,false,478,485,Iowa
+387-399,false,387,399,Wisconsin
+681-690,false,681,690,Not Issued
+040-049,false,040,049,Connecticut
+035-039,false,035,039,Rhode Island
+400-407,false,400,407,Kentucky
+261-267,false,261,267,Florida
+"525,585",true,525,585,New Mexico
