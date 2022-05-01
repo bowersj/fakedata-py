@@ -8,7 +8,8 @@ from utils.integer_helpers import get_digits
 current_path = os.path.dirname(__file__)
 
 config = json.load( open( os.path.abspath( os.path.join( current_path, "credit_card\conf.json" ) ) ) )
-
+# 8 bit 0 - 255
+INTEGER_TYPE = np.int8
 DIST = default_rng()
 
 # TODO: figure out a way to pass in the distribution rather than hard coding it
@@ -31,12 +32,12 @@ def select( arr ) -> int:
 
         # account for a range of values
         if isinstance( val, list ):
-            return int( DIST.integers( low = val[0], high = val[1], endpoint = True ) )
+            return DIST.integers( low = val[0], high = val[1], endpoint = True )
         else:
-            return int( val )
+            return val
 
     else:
-        return int( arr[0] )
+        return arr[0]
 
 def credit_card( conf ):
     patterns = conf[ "patterns" ]
@@ -57,7 +58,15 @@ def credit_card( conf ):
     d = -1
     sum = 0
 
-    digits = np.concatenate(( np.array( digits ), DIST.integers( low = 1, high = 10, size = length - 1 ) ))
+    digits = np.concatenate(( 
+        np.array( digits, dtype = INTEGER_TYPE ), 
+        DIST.integers( 
+            low = 1, 
+            high = 10, 
+            size = length - 1, 
+            dtype = INTEGER_TYPE 
+        ) 
+    ))
 
     for i in range( 0, len( digits ) ):
         digit = digits[i]
@@ -76,26 +85,28 @@ def credit_card( conf ):
     remainder = sum % 10
 
     if remainder == 0:
-        digits = np.append( digits, 0 )
+        digits = np.append( digits, INTEGER_TYPE( 0 ) )
     else:
-        digits = np.append( digits, 10 - remainder )
+        digits = np.append( digits, INTEGER_TYPE( 10 - remainder ) )
     
     ccv = three_digit_code() if conf[ "code" ][ "size" ] == 3 else four_digit_code()
 
     return {
         "type": conf[ "type" ],
         "number": digits,
-        "sum": sum,
         "code": ccv,
         "code_name": conf[ "code" ][ "name" ]
     }
 
+# TODO: build formatting functions
 
 
-print( credit_card( config.get( "visa" ) ) )
-print( credit_card( config.get( "visa" ) ) )
 
-print( credit_card( config.get( "mastercard" ) ) )
-print( credit_card( config.get( "mastercard" ) ) )
-print( credit_card( config.get( "mastercard" ) ) )
-print( credit_card( config.get( "mastercard" ) ) )
+# ccs = [ x for x in config.keys() if x!= "types" ]
+
+# print( ccs )
+
+# for cc in ccs:
+#     for i in range( 0, 5 ):
+#         print( credit_card( config[ cc ] ) )
+#     print( "===================================================================================================" )
