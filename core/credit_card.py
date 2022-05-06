@@ -98,9 +98,42 @@ def credit_card( conf ):
         "code_name": conf[ "code" ][ "name" ]
     }
 
-# TODO: build formatting functions
+def simple_formatter( cc_object ):
+    number = cc_object.get( "number" )
+    return "".join( str(x) for x in  number )
+
+def gap_formatter( cc_object, seperator = " " ):
+    t = cc_object.get( "type" )
+    gaps = config.get( t ).get( "gaps" )
+    number = cc_object.get( "number" )
+
+    return custom_gap_formatter( number, gaps, seperator )
 
 
+def custom_gap_formatter( number, gaps = [], seperator = " " ):
+    # t = cc_object.get( "type" )
+    # gaps = config.get( t ).get( "gaps" )
+    # number = cc_object.get( "number" )
+    l_gaps = len( gaps ) - 1
+
+    gap_index = 0
+    formatted_number = ""
+
+    for i in range( 0, len( number ) ):
+        formatted_number += str( number[ i ] )
+
+        if i + 1 == gaps[ gap_index ]:
+
+            if gap_index + 1 <= l_gaps:
+                gap_index += 1
+
+            formatted_number += seperator
+    
+    return formatted_number
+
+
+# print( simple_formatter( credit_card( config.get( "visa" ) ) ) )
+# print( gap_formatter( credit_card( config.get( "visa" ) ) ) )
 
 # ccs = [ x for x in config.keys() if x!= "types" ]
 
