@@ -13,6 +13,7 @@ INTEGER_TYPE = np.int8
 DIST = default_rng()
 
 # TODO: figure out a way to pass in the distribution rather than hard coding it
+# TODO: convert into a class
 
 # CCV functions
 

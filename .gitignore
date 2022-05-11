@@ -136,3 +136,9 @@ env/*
 # editor files
 .vscode/*
 .vs/*
+
+# postgres conn info
+postgres/conn.json
+
+# temp data dir
+postgres/data/*

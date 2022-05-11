@@ -11,7 +11,7 @@ class Discrete_Distribution:
         if not ( utils.is_arr( values ) and utils.is_arr( percentages ) ):
             raise ValueError( "values and percentages must be a list or an np.array" )
 
-        if len( values ) != len( percentages ):
+        if percentages and len( values ) != len( percentages ):
             raise ValueError( "The number of items in the values and percentages lists must be the same." )
 
         self.v = values
