@@ -1,5 +1,5 @@
 Write-Output "Creating Virtual Environment 'env'"
-virtualenv env
+python -m virtualenv env
 
 ./activate.ps1
 
