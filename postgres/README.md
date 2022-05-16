@@ -56,21 +56,6 @@ https://github.com/pelias/docker/
 
 
 
-[who's on first](https://whosonfirst.org/) is a data set that combines a lot of open datasets into one place.
-
-https://whosonfirst.org/download/
-
-
-Therefore, there are bunch of licenses to check out ot make sure I can use this data set
-https://whosonfirst.org/docs/licenses/
-
-
-To load the data you have to load a sqllite db file which can be done using pgloader
-https://pgloader.readthedocs.io/en/latest/ref/sqlite.html
-https://github.com/dimitri/pgloader
-
-
-
 
 Everything below is under a coopy left license and can only be used as a reference!!!!!
 --------------------------------------------------------------------------------------------------------
