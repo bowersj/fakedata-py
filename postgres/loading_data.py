@@ -2,8 +2,6 @@ import json
 from os import path, system
 from datetime import datetime, timedelta
 
-import requests
-
 from io import BytesIO
 from urllib.request import urlopen, urlretrieve
 from zipfile import ZipFile
