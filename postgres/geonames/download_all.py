@@ -62,6 +62,9 @@ def download( check_file_name, url ):
             urlretrieve( url, filename = p, reporthook=t.update_to )
 
     print( check_file_name + " is up to date" )
+    print( "" )
+
+print( "Starting geonames download" )
 
 try:
     download(
@@ -235,4 +238,4 @@ try:
 except (Exception, Error) as error:
     print( "Error while downloading resources" )
 finally:
-    print( "finished downloading resources" )
+    print( "finished geonames download" )
