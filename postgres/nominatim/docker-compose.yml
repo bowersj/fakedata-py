@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+    nominatim:
+        container_name: nominatim
+        image: mediagis/nominatim:4.0
+        restart: always
+        ports:
+            - "3141:8080"
+            - "2718:5432"
+        environment:
+            PBFPATH: /nominatim/data/north-america-latest.osm.pbf
+            FREEZE: true
+            IMPORT_WIKIPEDIA: false
+            IMPORT_US_POSTCODES: false
+            IMPORT_GB_POSTCODES: false
+            IMPORT_TIGER_ADDRESSES: false
+            NOMINATIM_PASSWORD: K*kP$hIO3TAdam7!
+        volumes:
+            -  postgres_data:/var/lib/postgresql/12/main
+            -  data:/nominatim/data
+        shm_size: 8gb
+
+volumes:
+    docker_nominatim_data:
+    data:
