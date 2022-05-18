@@ -140,5 +140,5 @@ env/*
 # postgres conn info
 postgres/conn.json
 
-# temp data dir
-postgres/data/*
+# temp data dirs
+**/data/*
