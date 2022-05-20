@@ -56,6 +56,10 @@ https://github.com/pelias/docker/
 
 
 
+list of GIS data sources
+https://freegisdata.rtwilson.com/
+
+
 
 Everything below is under a coopy left license and can only be used as a reference!!!!!
 --------------------------------------------------------------------------------------------------------

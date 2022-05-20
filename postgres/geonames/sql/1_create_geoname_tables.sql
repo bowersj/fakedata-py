@@ -1,21 +1,21 @@
--- SCHEMA: fake_data
+-- SCHEMA: fakedata
 
-CREATE SCHEMA IF NOT EXISTS fake_data
+CREATE SCHEMA IF NOT EXISTS fakedata
     AUTHORIZATION admin;
 
-COMMENT ON SCHEMA fake_data
+COMMENT ON SCHEMA fakedata
     IS 'filterable source data for fake data generator';
 
-DROP TABLE IF EXISTS fake_data.geoname;
-DROP TABLE IF EXISTS fake_data.alternatename;
-DROP TABLE IF EXISTS fake_data.countryinfo;
-DROP TABLE IF EXISTS fake_data.iso_languagecodes;
-DROP TABLE IF EXISTS fake_data.admin2CodesAscii;
-DROP TABLE IF EXISTS fake_data.featureCodes;
-DROP TABLE IF EXISTS fake_data.timeZones;
-DROP TABLE IF EXISTS fake_data.postalcodes;
+DROP TABLE IF EXISTS fakedata.geoname;
+DROP TABLE IF EXISTS fakedata.alternatename;
+DROP TABLE IF EXISTS fakedata.countryinfo;
+DROP TABLE IF EXISTS fakedata.iso_languagecodes;
+DROP TABLE IF EXISTS fakedata.admin2CodesAscii;
+DROP TABLE IF EXISTS fakedata.featureCodes;
+DROP TABLE IF EXISTS fakedata.timeZones;
+DROP TABLE IF EXISTS fakedata.postalcodes;
 
-create table fake_data.geoname (
+create table fakedata.geoname (
     geonameid   INT,
     name VARCHAR(200),
     asciiname VARCHAR(200),
@@ -37,7 +37,7 @@ create table fake_data.geoname (
     moddate DATE
  );
 
-create table fake_data.alternatename (
+create table fakedata.alternatename (
     alternatenameId INT,
     geonameid INT,
     isoLanguage VARCHAR(7),
@@ -48,7 +48,7 @@ create table fake_data.alternatename (
     isHistoric BOOLEAN
  );
 
-create table fake_data.countryinfo (
+create table fakedata.countryinfo (
     iso_alpha2 CHAR(2),
     iso_alpha3 CHAR(3),
     iso_numeric INT,
@@ -70,27 +70,27 @@ create table fake_data.countryinfo (
     equivfipscode VARCHAR(3)
  );
 
-CREATE TABLE fake_data.iso_languagecodes(
+CREATE TABLE fakedata.iso_languagecodes(
     iso_639_3 CHAR(4),
     iso_639_2 VARCHAR(50),
     iso_639_1 VARCHAR(50),
     language_name VARCHAR(200)
  );
 
-CREATE TABLE fake_data.admin2CodesAscii (
+CREATE TABLE fakedata.admin2CodesAscii (
     code CHAR(80),
     name TEXT,
     nameAscii TEXT,
     geonameid INT
  );
 
-CREATE TABLE fake_data.featureCodes (
+CREATE TABLE fakedata.featureCodes (
     code CHAR(7),
     name VARCHAR(200),
     description TEXT
  );
 
-CREATE TABLE fake_data.timeZones (
+CREATE TABLE fakedata.timeZones (
     countryCode CHAR(2),
     timeZoneId VARCHAR(200),
     GMT_offset NUMERIC(3,1),
@@ -98,7 +98,7 @@ CREATE TABLE fake_data.timeZones (
     raw_offset NUMERIC(3,1)
  );
 
-CREATE TABLE fake_data.postalcodes (
+CREATE TABLE fakedata.postalcodes (
     countrycode CHAR(2),
     postalcode  VARCHAR(20),
     placename   VARCHAR(180),
