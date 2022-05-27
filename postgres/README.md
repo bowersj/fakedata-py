@@ -36,6 +36,14 @@ GeoNames decoders
 http://www.geonames.org/maps/addresses.html#address
 http://www.geonames.org/export/reverse-geocoding.html
 
+### Initialize reverse geocoder
+`docker build -t local-reverse-geocoder .`
+### Create static image
+`docker run -it --name="local-reverse-geocoder" -p 3000:3000 -e PORT=3000 local-reverse-geocoder`
+
+
+
+
 free node version, will need some work
 https://github.com/tomayac/local-reverse-geocoder
 https://hub.docker.com/r/mesripour/local-reverse-geocoder
