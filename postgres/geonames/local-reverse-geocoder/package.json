@@ -1,0 +1,54 @@
+{
+  "name": "local-reverse-geocoder",
+  "version": "0.11.1",
+  "description": "Implements a local reverse geocoder based on GeoNames.",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "lint": "jshint --exclude ./node_modules,./docs/scripts .",
+    "start": "node --max-old-space-size=4096 app.js",
+    "build": "jsdoc -d docs index.js",
+    "prettier": "prettier --write *.{js,md,json}"
+  },
+  "keywords": [
+    "geocoding",
+    "geocoder",
+    "reverse",
+    "local"
+  ],
+  "files": [
+    "app.js",
+    "index.js",
+    "index.d.ts"
+  ],
+  "author": "Thomas Steiner",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "async": "^3.2.1",
+    "csv-parse": "^4.16.3",
+    "cors": "^2.8.5",    
+    "debug": "^4.3.2",
+    "kdt": "^0.1.0",
+    "request": "^2.88.2",
+    "unzip-stream": "^0.3.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tomayac/local-reverse-geocoder.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tomayac/local-reverse-geocoder/issues"
+  },
+  "homepage": "https://github.com/tomayac/local-reverse-geocoder",
+  "engines": {
+    "node": ">=10.15.0",
+    "npm": ">=6.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.7.10",
+    "express": "^4.17.1",
+    "jsdoc": "^3.6.7",
+    "jshint": "^2.13.1",
+    "prettier": "^2.3.2"
+  }
+}

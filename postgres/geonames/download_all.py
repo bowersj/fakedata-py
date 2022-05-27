@@ -38,13 +38,20 @@ try:
         "allCountries.txt",
         "https://download.geonames.org/export/dump/allCountries.zip"
     )
-    # pop( path.join( DATA_DIR, "allCountries.txt" ) )
 
     download_unzip(
         "alternateNames.txt",
         "alternateNames.txt and iso-languagecodes.txt",
         "https://download.geonames.org/export/dump/alternateNames.zip"
     )
+
+    # TODO: figure out table structure
+    # for now use the deprecated alternateNames table
+    # download_unzip(
+    #     "alternateNames.txt",
+    #     "alternateNames.txt and iso-languagecodes.txt",
+    #     "https://download.geonames.org/export/dump/alternateNamesV2.zip"
+    # )
 
     download_unzip(
         "cities500.txt",

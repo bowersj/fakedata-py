@@ -112,3 +112,139 @@ CREATE TABLE fakedata.postalcodes (
     longitude   FLOAT,
     accuracy    SMALLINT
  );
+
+CREATE TABLE IF NOT EXISTS fakedata.city500
+(
+    geonameid integer,
+    name character varying(200),
+    asciiname character varying(200),
+    alternatenames text,
+    latitude double precision,
+    longitude double precision,
+    fclass character(1),
+    fcode character varying(10),
+    country character varying(2),
+    cc2 character varying(200),
+    admin1 character varying(20),
+    admin2 character varying(80),
+    admin3 character varying(20),
+    admin4 character varying(20),
+    population bigint,
+    elevation integer,
+    gtopo30 integer,
+    timezone character varying(40),
+    moddate date
+);
+
+CREATE TABLE IF NOT EXISTS fakedata.city1000
+(
+    geonameid integer,
+    name character varying(200),
+    asciiname character varying(200),
+    alternatenames text,
+    latitude double precision,
+    longitude double precision,
+    fclass character(1),
+    fcode character varying(10),
+    country character varying(2),
+    cc2 character varying(200),
+    admin1 character varying(20),
+    admin2 character varying(80),
+    admin3 character varying(20),
+    admin4 character varying(20),
+    population bigint,
+    elevation integer,
+    gtopo30 integer,
+    timezone character varying(40),
+    moddate date
+);
+
+CREATE TABLE IF NOT EXISTS fakedata.city5000
+(
+    geonameid integer,
+    name character varying(200),
+    asciiname character varying(200),
+    alternatenames text,
+    latitude double precision,
+    longitude double precision,
+    fclass character(1),
+    fcode character varying(10),
+    country character varying(2),
+    cc2 character varying(200),
+    admin1 character varying(20),
+    admin2 character varying(80),
+    admin3 character varying(20),
+    admin4 character varying(20),
+    population bigint,
+    elevation integer,
+    gtopo30 integer,
+    timezone character varying(40),
+    moddate date
+);
+
+CREATE TABLE IF NOT EXISTS fakedata.city15000
+(
+    geonameid integer,
+    name character varying(200),
+    asciiname character varying(200),
+    alternatenames text,
+    latitude double precision,
+    longitude double precision,
+    fclass character(1),
+    fcode character varying(10),
+    country character varying(2),
+    cc2 character varying(200),
+    admin1 character varying(20),
+    admin2 character varying(80),
+    admin3 character varying(20),
+    admin4 character varying(20),
+    population bigint,
+    elevation integer,
+    gtopo30 integer,
+    timezone character varying(40),
+    moddate date
+);
+
+CREATE TABLE IF NOT EXISTS fakedata.hierarchy
+(
+    parentid integer,
+    childid integer,
+    type VARCHAR(40)
+);
+
+CREATE TABLE IF NOT EXISTS fakedata.admin1codeascii
+(
+    code      VARCHAR(20),
+    name      TEXT,
+    asciiname TEXT,
+    geonameid integer
+);
+
+CREATE TABLE IF NOT EXISTS fakedata.admin5code
+(
+    geonameid integer,
+    adm5code VARCHAR(20)
+);
+
+CREATE TABLE IF NOT EXISTS fakedata.nocountry
+(
+    geonameid integer,
+    name character varying(200),
+    asciiname character varying(200),
+    alternatenames text,
+    latitude double precision,
+    longitude double precision,
+    fclass character(1),
+    fcode character varying(10),
+    country character varying(2),
+    cc2 character varying(200),
+    admin1 character varying(20),
+    admin2 character varying(80),
+    admin3 character varying(20),
+    admin4 character varying(20),
+    population bigint,
+    elevation integer,
+    gtopo30 integer,
+    timezone character varying(40),
+    moddate date
+);
