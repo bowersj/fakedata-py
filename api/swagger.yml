@@ -1,3 +1,4 @@
+# https://editor.swagger.io/?_ga=2.166046390.926583651.1656911588-2111575381.1656911588
 swagger: "2.0"
 info:
   description: "A set of endpoints to allow the coordination, retreval, and generation of Fake Data in a distributed fasion."
